@@ -23,3 +23,19 @@ alias vim="${HOME?}/bin/emacs -nw"
 if [ -r ~/.bash_dd ]; then
     source ~/.bash_dd
 fi
+
+#######################################################################
+# ssh-agent                                                           #
+#######################################################################
+if [ "$TERM" != "dumb" ]; then
+    ssh_agent_pid_1=`pgrep -u $UID ssh-agent`
+    if [ -z "$ssh_agent_pid_1" ]; then
+        if [ -z "$DISPLAY" ]; then
+            export DISPLAY=foo
+        fi
+        eval `/usr/bin/ssh-agent | tee $HOME/.ssh/$HOSTNAME.ssh-agent`
+        ssh-add -K -A
+    else
+        . $HOME/.ssh/$HOSTNAME.ssh-agent
+    fi
+fi
