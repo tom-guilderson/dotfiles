@@ -19,6 +19,10 @@ export EDITOR="${HOME?}/bin/emacs -nw"
 alias vi="${HOME?}/bin/emacs -nw"
 alias vim="${HOME?}/bin/emacs -nw"
 
+if command -v most > /dev/null 2>&1; then
+    export PAGER="most"
+fi
+
 # source in dd specific stuff
 if [ -r ~/.bash_dd ]; then
     source ~/.bash_dd
