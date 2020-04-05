@@ -110,6 +110,16 @@
 (setq c-basic-offset 4)
 (setq c-offsets-alist '((case-label . +)))
 ;;
+
+;; x86 assembly - NASM
+;; - because it is the best option, and the default asm indentation is messed up
+;;
+(autoload 'nasm-mode "nasm-mode"
+  "Major mode for editing NASM x86 assembly" t)
+(add-to-list 'auto-mode-alist '("\\.asm\\'" . nasm-mode))
+(add-to-list 'auto-mode-alist '("\\.s\\'" . nasm-mode))
+(add-to-list 'auto-mode-alist '("\\S\\'" . nasm-mode))
+;;
 ;; Perl - use cperl mode
 ;;
 ; -> does not play nice with solarized theme
@@ -159,11 +169,17 @@
 ;; (require 'go-autocomplete)
 ;; (require 'auto-complete-config)
 ;; (ac-config-default)
+
+;;
+;; go-dlv debugger GUD integration
+;;
+(require 'go-dlv)
+
 ;;
 ;; whitespace
 ;;
 (setq-default show-trailing-whitespace t)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
 ;;
 ;; tab settings
 ;;
@@ -175,12 +191,16 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(blink-cursor-mode nil)
+ '(column-number-mode t)
  '(package-selected-packages
    (quote
-    (markdown-mode gotest go-guru go-eldoc flycheck-golangci-lint exec-path-from-shell company-go auto-complete))))
+    (nasm-mode markdown-mode gotest go-guru go-eldoc flycheck-golangci-lint exec-path-from-shell company-go auto-complete)))
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+)
