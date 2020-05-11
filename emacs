@@ -15,10 +15,10 @@
   (scroll-bar-mode -1)
   (mouse-wheel-mode -1)
   (menu-bar-mode t)
-  (load-theme 'solarized-light t))
+  (load-theme 'alect-light t))
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize)
-  (set-frame-font "Andale Mono 14" nil t))
+  (set-frame-font "Andale Mono 15" nil t))
 (blink-cursor-mode -1)
 (column-number-mode t)
 (setq initial-scratch-message "")
@@ -110,15 +110,14 @@
 (setq c-basic-offset 4)
 (setq c-offsets-alist '((case-label . +)))
 ;;
-
 ;; x86 assembly - NASM
-;; - because it is the best option, and the default asm indentation is messed up
+;; - because the default asm mode indentation is messed up
 ;;
 (autoload 'nasm-mode "nasm-mode"
   "Major mode for editing NASM x86 assembly" t)
 (add-to-list 'auto-mode-alist '("\\.asm\\'" . nasm-mode))
 (add-to-list 'auto-mode-alist '("\\.s\\'" . nasm-mode))
-(add-to-list 'auto-mode-alist '("\\S\\'" . nasm-mode))
+(add-to-list 'auto-mode-alist '("\\.S\\'" . nasm-mode))
 ;;
 ;; Perl - use cperl mode
 ;;
@@ -176,6 +175,31 @@
 (require 'go-dlv)
 
 ;;
+;; rust  https://rust-lang.org
+;;
+(require 'rust-mode)
+(setq rust-format-on-save t)
+(add-hook 'rust-mode-hook
+          '(lambda ()
+             (setq tab-width 2)
+             (setq racer-cmd (concat (getenv "HOME") "/.cargo/bin/racer")) ;; Rustup binaries PATH
+             (setq racer-rust-src-path (replace-regexp-in-string "\n\\'" ""
+                                                                 (shell-command-to-string "echo `rustc --print sysroot`/lib/rustlib/src/rust/src")))
+             (setq company-tooltip-align-annotations t)
+             (setq flymake-rust-use-cargo 1)
+             (add-hook 'rust-mode-hook #'racer-mode)
+             (add-hook 'rust-mode-hook 'flymake-rust-load)
+             (add-hook 'racer-mode-hook #'eldoc-mode)
+             (add-hook 'racer-mode-hook 'company-mode)
+             (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+             (add-hook 'rust-mode-hook 'cargo-minor-mode)
+             (local-set-key (kbd "TAB") #'company-indent-or-complete-common)
+             (local-set-key (kbd "C-c <tab>") 'rust-format-buffer)
+             (local-set-key (kbd "M-.") 'racer-find-definition)))
+(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+(setq company-tooltip-align-annotations t)
+
+;;
 ;; whitespace
 ;;
 (setq-default show-trailing-whitespace t)
@@ -193,9 +217,10 @@
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode nil)
  '(column-number-mode t)
+ '(nil nil t)
  '(package-selected-packages
    (quote
-    (nasm-mode markdown-mode gotest go-guru go-eldoc flycheck-golangci-lint exec-path-from-shell company-go auto-complete)))
+    (company-racer racer flycheck-rust cargo alect-themes ample-theme nasm-mode markdown-mode gotest go-guru go-eldoc flycheck-golangci-lint exec-path-from-shell company-go auto-complete)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -203,4 +228,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-)
+ )
