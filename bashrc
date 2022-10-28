@@ -2,8 +2,11 @@ alias l='ls -lF'
 alias la='ls -AlF'
 alias lah='ls -AlhF'
 
-# put ~/go/bin in the path
-export PATH="${HOME?}/bin:${HOME?}/go/bin:${PATH?}"
+# put ~/.cargo/bin in the path
+export PATH="${HOME?}/.cargo/bin:${PATH?}"
+
+# put docker-compose into path
+# export PATH="${PATH?}:/usr/libexec/docker/cli-plugins"
 
 # do not use the out of data system emacs - use the one in Applications
 # use -nw to run in terminal by default
@@ -11,38 +14,40 @@ export PATH="${HOME?}/bin:${HOME?}/go/bin:${PATH?}"
 # alias xemacs='/Applications/Emacs.app/Contents/MacOS/Emacs'
 # export EDITOR='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
 
-alias emacs="${HOME?}/bin/emacs -nw"
-alias xemacs="${HOME?}/bin/emacs"
-export EDITOR="${HOME?}/bin/emacs -nw"
+alias emacs="emacs -nw"
+alias xemacs="emacs"
+export EDITOR="emacs -nw"
 
 # for brain dead things that just dump me into vi ...
-alias vi="${HOME?}/bin/emacs -nw"
-alias vim="${HOME?}/bin/emacs -nw"
+alias vi="emacs -nw"
+alias vim="emacs -nw"
 
-if command -v most > /dev/null 2>&1; then
-    export PAGER="most"
-fi
 
 # source in dd specific stuff
 if [ -r ~/.bash_dd ]; then
     source ~/.bash_dd
 fi
 
+# githubtoken needed for docker build
+if [ -f ~/.githubtoken ]; then
+    . ~/.githubtoken
+fi
+
 #######################################################################
 # ssh-agent                                                           #
 #######################################################################
-if [ "$TERM" != "dumb" ]; then
-    ssh_agent_pid_1=`pgrep -u $UID ssh-agent`
-    if [ -z "$ssh_agent_pid_1" ]; then
-        if [ -z "$DISPLAY" ]; then
-            export DISPLAY=foo
-        fi
-        eval `/usr/bin/ssh-agent | tee $HOME/.ssh/$HOSTNAME.ssh-agent`
-        ssh-add -K -A
-    else
-        . $HOME/.ssh/$HOSTNAME.ssh-agent
-    fi
-fi
+# if [ "$TERM" != "dumb" ]; then
+#     ssh_agent_pid_1=`pgrep -u $UID ssh-agent`
+#     if [ -z "$ssh_agent_pid_1" ]; then
+#         if [ -z "$DISPLAY" ]; then
+#             export DISPLAY=foo
+#         fi
+#         eval `/usr/bin/ssh-agent | tee $HOME/.ssh/$HOSTNAME.ssh-agent`
+#         ssh-add -K -A
+#     else
+#         . $HOME/.ssh/$HOSTNAME.ssh-agent
+#     fi
+# fi
 
 # run this to restore the connection to the ssh agent
 function fixssh() {
@@ -53,3 +58,4 @@ function fixssh() {
     fi
   done
 }
+
