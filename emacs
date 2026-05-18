@@ -17,8 +17,18 @@
   (menu-bar-mode t)
   (load-theme 'alect-light t))
 (when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize)
-  (set-frame-font "Andale Mono 15" nil t))
+ (exec-path-from-shell-initialize)
+;; (set-frame-font "Andale Mono 18" nil t))
+;; (set-frame-font "Monospace-18" nil t))
+ (set-frame-font "Monospace-24" nil t))
+;;
+;; fonts
+;;
+;; (add-to-list 'default-frame-alist
+;;             '(font . "Monospace-24"))
+;;
+;; (add-to-list 'default-frame-alist
+;;             '(font . "Andale Mono 18"))
 (blink-cursor-mode -1)
 (column-number-mode t)
 (setq initial-scratch-message "")
@@ -29,22 +39,26 @@
 (setq sentence-end-double-space nil)
 (setq require-final-newline t)
 (defalias 'yes-or-no-p 'y-or-n-p)
+
 ;; use my preferred shortcut for goto-line
 ;; remap quit from C-g to C-q
 ;;
 (global-unset-key "\C-g")
 (global-set-key "\C-q" 'keyboard-quit)
 (global-set-key "\C-g" 'goto-line)
+
 ;;
 ;; when doing a list buffers - put it in a split window and move point
 ;;
 (global-unset-key "\C-x\C-b")
 (global-set-key "\C-x\C-b" 'buffer-menu-other-window)
+
 ;;
-;; uncomment to use horizontal split screen instead of vertical
+;; control split threshold for width for horizontal split screen
 ;;
-;(setq split-height-threshold nil)
-;(setq split-width-threshold 0)
+(setq split-height-threshold nil)
+(setq split-width-threshold 140)
+
 ;;
 ;; do not clutter file system with autosave and backup files
 ;; place them in ~/.emacs.d/backups and ~/.emacs.d/autosaves
@@ -58,34 +72,27 @@
 (setq auto-save-file-name-transforms `((".*" "~/.emacs.d/autosaves/\\1" t)))
 (make-directory "~/.emacs.d/backups/" t)
 (make-directory "~/.emacs.d/autosaves/" t)
+
 ;;
 ;; org-mode
 ;;
-(require 'org-install)
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-; org agenda files
-(setq org-agenda-files (list "~/org/work.org"
-			     "~/org/home.org"))
+;; (require 'org-install)
+;; (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+;; (define-key global-map "\C-cl" 'org-store-link)
+;; (define-key global-map "\C-ca" 'org-agenda)
+;; (setq org-log-done t)
+;; ; org agenda files
+;; (setq org-agenda-files (list "~/org/work.org"
+;; 			     "~/org/home.org"))
 ;;
+
 ;; markdown-mode for editing/reading markdown text
 ;;
 (autoload 'markdown-mode "markdown-mode"
   "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-;;
-;; linum-mode - use M-x linum-mode to toggle on/off
-;;
-(require 'linum)
-(setq linum-format "%5d ")
-;;
-;; post-mode for editing email from mutt
-;;
-;; (load "~/.mutt/post")
-;;
+
 ;; use aspell instead of ispell
 ;;
 (setq ispell-program-name "aspell"
@@ -109,6 +116,7 @@
       c-basic-offset 4)
 (setq c-basic-offset 4)
 (setq c-offsets-alist '((case-label . +)))
+
 ;;
 ;; x86 assembly - NASM
 ;; - because the default asm mode indentation is messed up
@@ -118,6 +126,7 @@
 (add-to-list 'auto-mode-alist '("\\.asm\\'" . nasm-mode))
 (add-to-list 'auto-mode-alist '("\\.s\\'" . nasm-mode))
 (add-to-list 'auto-mode-alist '("\\.S\\'" . nasm-mode))
+
 ;;
 ;; Perl - use cperl mode
 ;;
@@ -128,46 +137,16 @@
 (setq perl-indent-level 4)
 (setq perl-indent-parens-as-block t)
 (setq perl-tab-always-indent t)
+
 ;; Vagrant -> ruby
 (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
+
 ;;
 ;; Go
 ;;
 (require 'go-mode)
-(require 'go-guru)
-(require 'gotest)
-(require 'company)
-(require 'company-go)
-;; post from the creator of go-mode that has some useful info
-;; http://dominik.honnef.co/posts/2013/03/writing_go_in_emacs/
-;;
-;; need to learn how to configure/use flycheck:
-;; https://github.com/flycheck/flycheck
-;; https://github.com/weijiangan/flycheck-golangci-lint
-;;
-;; disable megacheck - others says it is a resource hog ...
-;; (add-to-list 'flycheck-disabled-checkers 'go-megacheck)
-(add-hook 'go-mode-hook
-          (lambda ()
-            (setq tab-width 4 indent-tabs-mode 1)
-            (go-eldoc-setup)
-            (set (make-local-variable 'company-backends) '(company-go))
-            (company-mode)
-            ;; run gofmt before saving
-            (add-hook 'before-save-hook 'gofmt-before-save)
-            ;; manage imports
-            ;; C-c C-a is mapped to go-import-add by default in go-mode
-            (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)
-            (local-set-key (kbd "C-c c") 'go-goto-imports)
-            (go-guru-hl-identifier-mode)))
-(setenv "GOPATH" "/Users/tom.guilderson/go")
-(setenv "CGO_CXX_FLAGS_ALLOW" "-lpthread")
-(add-to-list 'exec-path "/Users/tom.guilderson/go/bin")
-;; https://github.com/mdempsky/gocode
-;; using the go-autocomplete.el copied from gocode repository
-;; (require 'go-autocomplete)
-;; (require 'auto-complete-config)
-;; (ac-config-default)
+(autoload 'go-mode "go-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
 
 ;;
 ;; go-dlv debugger GUD integration
@@ -179,37 +158,20 @@
 ;;
 (require 'rust-mode)
 (setq rust-format-on-save t)
-(add-hook 'rust-mode-hook
-          '(lambda ()
-             (setq tab-width 2)
-             (setq racer-cmd (concat (getenv "HOME") "/.cargo/bin/racer")) ;; Rustup binaries PATH
-             (setq racer-rust-src-path (replace-regexp-in-string "\n\\'" ""
-                                                                 (shell-command-to-string "echo `rustc --print sysroot`/lib/rustlib/src/rust/src")))
-             (setq company-tooltip-align-annotations t)
-             (setq flymake-rust-use-cargo 1)
-             (add-hook 'rust-mode-hook #'racer-mode)
-             (add-hook 'rust-mode-hook 'flymake-rust-load)
-             (add-hook 'racer-mode-hook #'eldoc-mode)
-             (add-hook 'racer-mode-hook 'company-mode)
-             (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
-             (add-hook 'rust-mode-hook 'cargo-minor-mode)
-             (local-set-key (kbd "TAB") #'company-indent-or-complete-common)
-             (local-set-key (kbd "C-c <tab>") 'rust-format-buffer)
-             (local-set-key (kbd "M-.") 'racer-find-definition)))
-(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-(setq company-tooltip-align-annotations t)
 
 ;;
 ;; whitespace
 ;;
 (setq-default show-trailing-whitespace t)
 ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 ;;
 ;; tab settings
 ;;
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq tab-stop-list (number-sequence 4 80 4))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -219,13 +181,11 @@
  '(column-number-mode t)
  '(nil nil t)
  '(package-selected-packages
-   (quote
-    (company-racer racer flycheck-rust cargo alect-themes ample-theme nasm-mode markdown-mode gotest go-guru go-eldoc flycheck-golangci-lint exec-path-from-shell company-go auto-complete)))
- '(show-paren-mode t)
+   '(alect-themes exec-path-from-shell go-mode markdown-mode rust-mode))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+)

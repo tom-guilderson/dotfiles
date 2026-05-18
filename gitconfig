@@ -1,9 +1,11 @@
 [user]
-    name = tom.guilderson
-    email = tom.guilderson@datadoghq.com
+    name = tguilderson
+    email = tguilderson@magnite.com
 [url "ssh://git@github.com/"]
     insteadOf = https://github.com/
 [url "git@github.com:"]
     insteadOf = https://github.com/
-[core]
-	hooksPath = /usr/local/dd/global_hooks
+[url "ssh://git@github.rp-core.com/"]
+    insteadOf = https://github.rp-core.com/
+[url "git@github.rp-core.com:"]
+    insteadOf = https://github.rp-core.com/
